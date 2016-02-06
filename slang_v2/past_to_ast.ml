@@ -19,6 +19,7 @@ let translate_uop = function
 let translate_bop = function 
   | Past.ADD -> Ast.ADD 
   | Past.MUL -> Ast.MUL
+  | Past.DIE -> Ast.DIE
   | Past.SUB -> Ast.SUB
   | Past.LT -> Ast.LT
   | Past.AND -> Ast.AND
