@@ -211,6 +211,12 @@ let do_unary = function
   | (READ, UNIT)   -> INT (readint())
   | (op, _) -> complain ("malformed unary operator: " ^ (string_of_unary_oper op))
 
+
+(* die rolling using ocaml *)
+let rec roll_dice rolls sides = if rolls > 0 then (Int32.to_int (Random.int32 (Int32.of_int (sides+1)) ) + 
+  (roll_dice (rolls-1) sides)) else 0 
+
+
 let do_oper = function 
   | (AND,  BOOL m,  BOOL n) -> BOOL (m && n)
   | (OR,   BOOL m,  BOOL n) -> BOOL (m || n)
@@ -220,6 +226,8 @@ let do_oper = function
   | (ADD,  INT m,   INT n)  -> INT (m + n)
   | (SUB,  INT m,   INT n)  -> INT (m - n)
   | (MUL,  INT m,   INT n)  -> INT (m * n)
+  | (DIE,  INT m,   INT n)  -> INT (roll_dice m n)
+
   | (op, _, _)  -> complain ("malformed binary operator: " ^ (string_of_oper op))
 
 
