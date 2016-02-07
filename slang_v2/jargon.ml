@@ -279,7 +279,7 @@ let pop(n, vm) =
 
 let pop_top vm = let c = stack_top vm in (c, pop(1, vm))
 
-(* pop c onto stack  *) 
+(* push c onto stack  *) 
 let push(c, vm) = 
     if vm.sp < vm.stack_bound 
     then let _ = Array.set vm.stack vm.sp c in { vm with sp = vm.sp + 1 } 
@@ -296,6 +296,10 @@ let do_unary = function
   | (READ, STACK_UNIT)   -> STACK_INT (readint())
   | (op, _) -> Errors.complain ("do_unary: malformed unary operator: " ^ (string_of_unary_oper op))
 
+(* die rolling using ocaml *)
+let rec roll_dice rolls sides = if rolls > 0 then (Int32.to_int (Random.int32 (Int32.of_int (sides+1)) ) + 
+  (roll_dice (rolls-1) sides)) else 0 
+
 let do_oper = function 
   | (AND,  STACK_BOOL m,  STACK_BOOL n) -> STACK_BOOL (m && n)
   | (OR,   STACK_BOOL m,  STACK_BOOL n) -> STACK_BOOL (m || n)
@@ -305,6 +309,7 @@ let do_oper = function
   | (ADD,  STACK_INT m,   STACK_INT n)  -> STACK_INT (m + n)
   | (SUB,  STACK_INT m,   STACK_INT n)  -> STACK_INT (m - n)
   | (MUL,  STACK_INT m,   STACK_INT n)  -> STACK_INT (m * n)
+  | (DIE,  STACK_INT m,   STACK_INT n)  -> STACK_INT (roll_dice m n)
   | (op, _, _)  -> Errors.complain ("do_oper: malformed binary operator: " ^ (string_of_oper op))
 
 
